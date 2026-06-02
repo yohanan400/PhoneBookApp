@@ -1,0 +1,24 @@
+[
+  {
+    "Id": 1,
+    "FirstName": "Test1FN",
+    "LastName": "TestL1N",
+    "PhoneNumber": "0500000001",
+    "Department": "Shob",
+    "Email": "Test1Email@Test.test",
+    "Description": "This is the description for Test1",
+    "Gender": 0,
+    "PicturePath": "P:\\PhoneBookApp\\PhoneBookApp\\resources\\profilePicture1.png"
+  },
+  {
+    "Id": 3,
+    "FirstName": "Test2FN",
+    "LastName": "TestL2N",
+    "PhoneNumber": "0500000002",
+    "Department": "Shob",
+    "Email": "Test2Email@Test.test",
+    "Description": "This is the description for Test2",
+    "Gender": 1,
+    "PicturePath": "P:\\PhoneBookApp\\PhoneBookApp\\resources\\profilePicture2.png"
+  }
+]

@@ -1,0 +1,164 @@
+﻿<UserControl x:Class="PhoneBookApp.Views.ContactsListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PhoneBookApp.Views"
+             xmlns:converters="clr-namespace:PhoneBookApp.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <converters:ListContactToVisabilityConverter x:Key="listContactToVisabilityConverter"/>
+        <converters:SelectedListContactToFullContactConverter x:Key="selectedListContactToFullContactConverter"/>
+        <converters:GenderToBrushConverter x:Key="genderToBrushConverter"/>
+        <converters:TextToImageConverter x:Key="textToImageConverter"/>
+        <converters:ContactToContactToListConverter x:Key="contactToContactToListConverter"/>
+    </UserControl.Resources>
+
+    <Grid HorizontalAlignment="Center">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Margin="100 0 0 0" Text="Phone Book App" Grid.Column="0"/>
+        
+        <StackPanel Grid.Column="0">
+            <TextBox x:Name="filterTB" Margin="10 30 0 0" ToolTip="Search contact.." >
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="KeyUp">
+                        <i:InvokeCommandAction Command="{Binding FilterCommand}" CommandParameter="{Binding ElementName=filterTB, Path=Text}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TextBox>
+
+            <ListView x:Name="ContactsLV" Margin="10 5 0 15" Grid.Column="0" MinWidth="300"
+                      SelectedItem="{Binding SelectedContact, Converter={StaticResource contactToContactToListConverter}}"
+                      ItemsSource="{Binding ContactsForList}"
+                      SelectionMode="Single">
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectionChanged}" CommandParameter="{Binding ElementName=ContactsLV, Path=SelectedItem}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Background" Value="{Binding Converter={StaticResource genderToBrushConverter}}"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.View>
+                    <GridView>
+
+                        <GridViewColumn Header="First Name" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding FirstName}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Last Name" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding LastName}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Gnder" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Gender}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                    </GridView>
+                </ListView.View>
+
+            </ListView>
+
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Margin="10 0 20 0" Width="80" 
+                    Command="{Binding AddContactCommand }">Add</Button>
+
+                <Button Margin="20 0 10 0" Width="80">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:InvokeCommandAction Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedContact.Id}"/>
+                            <i:InvokeCommandAction Command="{Binding RefreshContactsListCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    Delete
+                </Button>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" 
+                    DataContext="{Binding ElementName=ContactsLV, Path=SelectedItem, Converter={ StaticResource selectedListContactToFullContactConverter}, Mode=OneWay}"
+                    Visibility="{Binding Path=SelectedItem, 
+                                         ElementName=ContactsLV,
+                                         Converter={StaticResource listContactToVisabilityConverter}}">
+            
+            <Border BorderBrush="Aqua" BorderThickness="2" CornerRadius="50" Height="105" Width="105">
+                <Image Width="100" Height="100" Source="{Binding PicturePath, Converter={StaticResource textToImageConverter}}">
+                    <Image.Clip>
+                        <EllipseGeometry Center="50, 50" RadiusX="50" RadiusY="50"/>
+                    </Image.Clip>
+                </Image>
+            </Border>
+
+            <Grid Grid.Column="1" Margin="50 25 0 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="First Name" Grid.Row="0" Grid.Column="0" Width="100" Margin="0 10 0 0"/>
+                <TextBox x:Name="FirstNameTB" Text="{Binding FirstName}" Grid.Row="0" Grid.Column="1" Width="250" Margin="25 10 0 0" />
+
+                <TextBlock Text="Last Name" Grid.Row="1" Grid.Column="0" Width="100" Margin="0 10 0 0"/>
+                <TextBox x:Name="LastNameTB" Text="{Binding LastName}" Grid.Row="1" Grid.Column="1" Width="250" Margin="25 10 0 0" />
+
+                <TextBlock Text="Phone Number" Grid.Row="2" Grid.Column="0" Width="100" Margin="0 10 0 0"/>
+                <TextBox x:Name="PhoneNumberTB" Text="{Binding PhoneNumber}" Grid.Row="2" Grid.Column="1" Width="250" Margin="25 10 0 0" />
+
+                <TextBlock Text="Department" Grid.Row="3" Grid.Column="0" Width="100" Margin="0 10 0 0"/>
+                <TextBox x:Name="DepartmentTB" Text="{Binding Department}" Grid.Row="3" Grid.Column="1" Width="250" Margin="25 10 0 0" />
+
+                <TextBlock Text="Email" Grid.Row="4" Grid.Column="0" Width="100" Margin="0 10 0 0"/>
+                <TextBox x:Name="EmailTB" Text="{Binding Email}" Grid.Row="4" Grid.Column="1" Width="250" Margin="25 10 0 0" />
+
+                <TextBlock Text="Description" Grid.Row="5" Grid.Column="0" Width="100" Margin="0 10 0 0"/>
+                <TextBox x:Name="DescriptionTB" Text="{Binding Description}" Grid.Row="5" Grid.Column="1" Width="250" Margin="25 10 0 0" />
+
+                <TextBlock Text="Gender" Grid.Row="6" Grid.Column="0" Width="100" Margin="0 10 0 0"/>
+                <TextBox x:Name="GenderTB" Grid.Row="6" Text="{Binding Gender}" Grid.Column="1" Width="250" Margin="25 10 0 0" />
+
+                <Button Margin="0 20 0 0" Width="80" Grid.Column="7" Grid.Row="7">Update</Button>
+
+            </Grid>
+        </StackPanel>
+
+
+    </Grid>
+    
+</UserControl>
